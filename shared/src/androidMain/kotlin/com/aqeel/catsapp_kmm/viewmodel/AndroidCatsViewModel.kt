@@ -1,7 +1,9 @@
 package com.aqeel.catsapp_kmm.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.aqeel.catsapp_kmm.repository.CatsRepository
+import kotlinx.coroutines.launch
 
 class AndroidCatsViewModel(
     repository: CatsRepository
@@ -12,10 +14,16 @@ class AndroidCatsViewModel(
     override val cats = commonViewModel.cats
     
     override fun addCat(name: String, breed: String, age: Int, imageUrl: String?, description: String?) {
-        commonViewModel.addCat(name, breed, age, imageUrl, description)
+        println("AndroidCatsViewModel: Adding cat - Name: $name, Breed: $breed, Age: $age")
+        viewModelScope.launch {
+            commonViewModel.addCat(name, breed, age, imageUrl, description)
+        }
     }
     
     override fun deleteCat(id: String) {
-        commonViewModel.deleteCat(id)
+        println("AndroidCatsViewModel: Deleting cat with ID: $id")
+        viewModelScope.launch {
+            commonViewModel.deleteCat(id)
+        }
     }
 } 
