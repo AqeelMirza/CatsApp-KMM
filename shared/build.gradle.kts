@@ -26,9 +26,21 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+            api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+            api("io.insert-koin:koin-core:3.5.0")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-            implementation("io.insert-koin:koin-core:3.5.0")
+        }
+        androidMain.dependencies {
+            implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+        }
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+        val iosMain by creating {
+            dependsOn(commonMain.get())
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

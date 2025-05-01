@@ -10,10 +10,10 @@ import kotlinx.coroutines.launch
 class CatsViewModel(
     private val repository: CatsRepository,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
-) {
-    val cats: Flow<List<Cat>> = repository.getAllCats()
+) : CatsViewModelInterface {
+    override val cats: Flow<List<Cat>> = repository.getAllCats()
 
-    fun addCat(name: String, breed: String, age: Int, imageUrl: String? = null, description: String? = null) {
+    override fun addCat(name: String, breed: String, age: Int, imageUrl: String?, description: String?) {
         val newCat = Cat(
             name = name,
             breed = breed,
@@ -26,7 +26,7 @@ class CatsViewModel(
         }
     }
 
-    fun deleteCat(id: String) {
+    override fun deleteCat(id: String) {
         scope.launch {
             repository.deleteCat(id)
         }
