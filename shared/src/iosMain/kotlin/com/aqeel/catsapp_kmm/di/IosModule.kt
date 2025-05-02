@@ -4,8 +4,10 @@ import com.aqeel.catsapp_kmm.viewmodel.CatsViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+fun initKoinIos() = initKoin {}
+
 class IosModule {
-    fun doInitKoin() = initKoin()
+    fun doInitKoin() = initKoinIos()
 }
 
 object ViewModelProvider: KoinComponent {

@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -114,34 +115,92 @@ fun AddCatDialog(
     onDismiss: () -> Unit,
     onAdd: (name: String, breed: String, age: Int) -> Unit
 ) {
+    val viewModel = koinViewModel<AndroidCatsViewModel>()
     var name by remember { mutableStateOf("") }
     var breed by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
+    var ageError by remember { mutableStateOf<String?>(null) }
+    var showBreedDropdown by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Add New Cat") },
         text = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                // Name field
                 TextField(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Name") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                TextField(
-                    value = breed,
-                    onValueChange = { breed = it },
-                    label = { Text("Breed") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Breed dropdown
+                Box {
+                    OutlinedTextField(
+                        value = breed,
+                        onValueChange = {},
+                        label = { Text("Breed") },
+                        readOnly = true,
+                        trailingIcon = {
+                            IconButton(onClick = { showBreedDropdown = true }) {
+                                Icon(Icons.Default.ArrowDropDown, "Select breed")
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    DropdownMenu(
+                        expanded = showBreedDropdown,
+                        onDismissRequest = { showBreedDropdown = false },
+                        modifier = Modifier.fillMaxWidth(0.9f)
+                    ) {
+                        viewModel.availableBreeds.forEach { breedOption ->
+                            DropdownMenuItem(
+                                text = { Text(breedOption) },
+                                onClick = {
+                                    breed = breedOption
+                                    showBreedDropdown = false
+                                }
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Age field with error handling
                 TextField(
                     value = age,
-                    onValueChange = { age = it },
-                    label = { Text("Age") },
-                    modifier = Modifier.fillMaxWidth()
+                    onValueChange = { input ->
+                        age = input
+                        ageError = when {
+                            input.isEmpty() -> null
+                            input.toIntOrNull() == null -> "Please enter a valid number"
+                            (input.toIntOrNull() ?: 0) <= 0 -> "Age must be greater than 0"
+                            else -> null
+                        }
+                    },
+                    label = { Text("Age (Months)") },
+                    isError = ageError != null,
+                    supportingText = {
+                        if (ageError != null) {
+                            Text(
+                                text = ageError ?: "",
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                    )
                 )
             }
         },
@@ -152,7 +211,8 @@ fun AddCatDialog(
                     if (name.isNotBlank() && breed.isNotBlank() && ageInt > 0) {
                         onAdd(name, breed, ageInt)
                     }
-                }
+                },
+                enabled = name.isNotBlank() && breed.isNotBlank() && ageError == null && age.isNotEmpty()
             ) {
                 Text("Add")
             }

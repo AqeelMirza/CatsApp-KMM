@@ -13,6 +13,19 @@ class CatsViewModel(
 ) : CatsViewModelInterface {
     override val cats: Flow<List<Cat>> = repository.getAllCats()
 
+    override val availableBreeds = listOf(
+        "Persian",
+        "Siamese",
+        "Maine Coon",
+        "British Shorthair",
+        "Ragdoll",
+        "Bengal",
+        "Sphynx",
+        "Russian Blue",
+        "Scottish Fold",
+        "American Shorthair"
+    )
+
     override fun addCat(name: String, breed: String, age: Int, imageUrl: String?, description: String?) {
         val newCat = Cat(
             name = name,

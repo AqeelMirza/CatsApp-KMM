@@ -6,6 +6,10 @@ class CatsViewModelWrapper: ObservableObject {
     @Published private(set) var cats: [Cat] = []
     private let viewModel: CatsViewModel
     
+    var availableBreeds: [String] {
+        viewModel.availableBreeds
+    }
+    
     init(viewModel: CatsViewModel) {
         self.viewModel = viewModel
         observeCats()

@@ -12,6 +12,7 @@ class AndroidCatsViewModel(
     private val commonViewModel = CatsViewModel(repository)
     
     override val cats = commonViewModel.cats
+    override val availableBreeds = commonViewModel.availableBreeds
     
     override fun addCat(name: String, breed: String, age: Int, imageUrl: String?, description: String?) {
         println("AndroidCatsViewModel: Adding cat - Name: $name, Breed: $breed, Age: $age")

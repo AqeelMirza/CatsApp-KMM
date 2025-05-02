@@ -79,7 +79,14 @@ struct AddCatView: View {
         NavigationView {
             Form {
                 TextField("Name", text: $name)
-                TextField("Breed", text: $breed)
+                
+                Picker("Breed", selection: $breed) {
+                    Text("Select a breed").tag("")
+                    ForEach(viewModel.availableBreeds, id: \.self) { breedOption in
+                        Text(breedOption).tag(breedOption)
+                    }
+                }
+                
                 TextField("Age", text: $age)
                     .keyboardType(.numberPad)
             }
